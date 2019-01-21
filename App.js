@@ -2,13 +2,13 @@ import React from 'react'
 import { View } from 'react-native'
 
 import UX from './styles/UX'
-import CameraView from './components/Camera/CameraView'
+import Navigation from './navigation/Navigation'
 
-export default class App extends React.Component {
+export default class App extends React.Component {    
     render() {
         return (
             <View style={UX.main}>
-                <CameraView />
+                <Navigation />
             </View>
         )
     }

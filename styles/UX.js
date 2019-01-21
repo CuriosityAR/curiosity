@@ -8,7 +8,8 @@ const UX = StyleSheet.create({
     },
 
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#220044'
     },
 
     themeText: {
@@ -16,6 +17,24 @@ const UX = StyleSheet.create({
     },
     themeButton: {
         color: '#440066'
+    },
+    themeNavBar: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        padding: 10,
+        backgroundColor: 'transparent',
+    },
+    themeNavBarActive: {
+        color: '#fff'
+    },
+    themeNavBarInactive: {
+        color: '#ffffff88'
+    },
+
+    explorerCamera: {
+        flex: 1
     }
 })
 

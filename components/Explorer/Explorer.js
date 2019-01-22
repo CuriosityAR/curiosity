@@ -10,10 +10,13 @@ import Geometrics from '../../libs/geometrics'
 import UX from '../../styles/UX'
 
 export default class Explorer extends React.Component {
+    radius   = 200000
     camera   = null
-    location = null
     heading  = null
-    radius   = 20000
+    location = {
+        latitude: null,
+        longitude: null
+    }
 
     state = {
         location: {
@@ -65,7 +68,7 @@ export default class Explorer extends React.Component {
     _watchPosition = () => {
         Location.watchPositionAsync({
             enableHighAccuracy: true,
-            accuracy: Location.Accuracy.High,
+            accuracy: Location.Accuracy.Highest,
             timeInterval: 10,
             distanceInterval: 0.1
         }, res => {
@@ -86,14 +89,16 @@ export default class Explorer extends React.Component {
                 this.location.longitude, 
                 this.radius
             ).then(res => {
-                // console.log(res)
-
                 if (res.err) return console.log(res.err)
+
+                // console.log(res)
 
                 for (let row of res.locations) {
                     let b = Geometrics.bearing(
-                        this.location.latitude, this.location.longitude, 
-                        row.lat, row.lon
+                        this.location.latitude, 
+                        this.location.longitude, 
+                        row.lat, 
+                        row.lon
                     )
         
                     if (Geometrics.headingsMatched(this.heading, b)) {

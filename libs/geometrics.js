@@ -1,7 +1,7 @@
 'use strict'
 
 export default class Geometrics {
-    _PRECISION = 20
+    static _MARGIN = 20
 
     static _degToRad = deg => deg * Math.PI / 180
 
@@ -34,11 +34,9 @@ export default class Geometrics {
 
         let bearing = 360 - ((Geometrics._radToDeg(Math.atan2(y, x)) + 360) % 360)
         
-        return bearing
+        return bearing  
     }
 
-    static headingsMatched = (h1, h2) => (
-           h1 >= h2 - Geometrics._PRECISION / 2
-        && h1 <= h2 + Geometrics._PRECISION / 2
-    )
+    static headingsMatched = (h1, h2) => (h1 >= h2 - Geometrics._MARGIN 
+                                       && h1 <= h2 + Geometrics._MARGIN)
 }

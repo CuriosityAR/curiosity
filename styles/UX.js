@@ -9,7 +9,7 @@ const UX = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#220044'
+        // backgroundColor: '#220044'
     },
 
     themeText: {
@@ -34,7 +34,12 @@ const UX = StyleSheet.create({
     },
 
     explorerCamera: {
-        flex: 1
+        position: 'absolute',
+        flex: 1,
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
     }
 })
 

@@ -5,16 +5,15 @@ import { Platform } from 'react-native'
 import { Container, CustomText, CustomButton } from '../Custom'
 import { Constants, Location, Camera, Permissions } from 'expo'
 
+import CuriosityAPI from '../../libs/curiosityAPI'
 import Geometrics from '../../libs/geometrics'
 import UX from '../../styles/UX'
 
 export default class Explorer extends React.Component {
-    camera = null
+    camera   = null
     location = null
-    heading = null
-    bearing = null
-    lat = 48.8588007
-    lon = 2.2953182
+    heading  = null
+    radius   = 20000
 
     state = {
         location: {
@@ -23,7 +22,8 @@ export default class Explorer extends React.Component {
         camera: {
             hasPermission: null,
             type: Camera.Constants.Type.back
-        }
+        },
+        match: null
     }
 
     _activateCamera = async () => {
@@ -53,11 +53,12 @@ export default class Explorer extends React.Component {
                     location: {
                         error: 'Curiosity needs to access to your location to work.'
                     }
-                });
+                })
             }
 
             this._watchPosition()
             this._watchHeading()
+            this._watchUserMatching()
         }
     }
 
@@ -69,35 +70,44 @@ export default class Explorer extends React.Component {
             distanceInterval: 0.1
         }, res => {
             this.location = res.coords
-            console.log(this.location)
-
-            let d = Geometrics.distance(
-                this.location.latitude, this.location.longitude, 
-                this.lat, this.lon
-            )
-
-            let b = Geometrics.bearing(
-                this.location.latitude, this.location.longitude, 
-                this.lat, this.lon
-            )
-            
-            this.bearing = b
-
-            console.log('bearing: ', b)
-
-            console.log('distance: ', d)
         })
     }
 
     _watchHeading = () => {
         Location.watchHeadingAsync(res => {
-            console.log(res.trueHeading)
-            console.log(Geometrics.headingsMatched(res.trueHeading, this.bearing))
-            
-            if (Geometrics.headingsMatched(res.trueHeading, this.bearing)) {
-                console.log('Matched at: ', res.trueHeading)
-            }
+            this.heading = res.magHeading
         })
+    }
+
+    _watchUserMatching = () => {
+        setInterval(() => {
+            CuriosityAPI.getLocations(
+                this.location.latitude, 
+                this.location.longitude, 
+                this.radius
+            ).then(res => {
+                // console.log(res)
+
+                if (res.err) return console.log(res.err)
+
+                for (let row of res.locations) {
+                    let b = Geometrics.bearing(
+                        this.location.latitude, this.location.longitude, 
+                        row.lat, row.lon
+                    )
+        
+                    if (Geometrics.headingsMatched(this.heading, b)) {
+                        this.setState({
+                            match: 'Eiffel Tower'
+                        })
+                    } else {
+                        this.setState({
+                            match: null
+                        })
+                    }
+                }
+            })
+        }, 500)
     }
 
     async componentDidMount() {
@@ -116,6 +126,12 @@ export default class Explorer extends React.Component {
                         type={this.state.camera.type}
                         ref={ ref => this.camera = ref }
                     />
+
+                    <Container>
+                        <CustomText>
+                            {this.state.match ? this.state.match : 'N/A'}
+                        </CustomText>
+                    </Container>
                 </Container>
             )
         } else {

@@ -1,16 +1,16 @@
 'use strict'
 
 import React from 'react'
-import { createDrawerNavigator, createAppContainer } from 'react-navigation'
+import { createAppContainer } from 'react-navigation'
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import CustomDrawerItem from './CustomDrawerItem'
 
 import Explorer from '../components/Explorer/Explorer'
 import Scanner from '../components/Scanner/Scanner'
 
 import UX from '../styles/UX'
 
-const drawerNavigator = createDrawerNavigator({
+const materialBottomTabNavigation = createMaterialBottomTabNavigator({
     Explorer: {
         screen: Explorer,
         navigationOptions: {
@@ -38,8 +38,7 @@ const drawerNavigator = createDrawerNavigator({
 }, {
     // labeled: false,
     initialRouteName: 'Explorer',
-    drawerBackgroundColor: UX.themeNavBar.backgroundColor,
-    contentComponent: CustomDrawerItem
+    barStyle: UX.themeNavBar
 })
 
-export default createAppContainer(drawerNavigator)
+export default createAppContainer(materialBottomTabNavigation)

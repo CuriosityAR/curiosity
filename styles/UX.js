@@ -40,6 +40,44 @@ const UX = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0
+    },
+    explorerMatchedContainer: {
+        position: 'relative',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    explorerMatchedDetails: {
+        flex: 0.8,
+        backgroundColor: '#220044',
+        borderRadius: 5,
+        padding: 20
+    },
+    explorerMatchedImage: {
+        height: 150,
+        borderRadius: 5
+    },
+    explorerMatchedTitle: {
+        textAlign: 'center',
+        fontSize: 20,
+        fontWeight: '600',
+        color: '#fff',
+        marginTop: 10,
+        marginBottom: 10
+    },
+    explorerMatchedDescribe: {
+        textAlign: 'justify',
+        color: '#fff'
+    },
+    themeDrawerItemContainer: {
+        flex: 1,
+    },
+    themeDrawerItemActive: {
+        color: '#fff'
+    },
+    themeDrawerItemInactive: {
+        color: '#ffffff44'
     }
 })
 

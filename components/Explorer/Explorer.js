@@ -1,8 +1,8 @@
 'use strict'
 
 import React from 'react'
-import { Platform } from 'react-native'
-import { Container, CustomText, CustomButton } from '../Custom'
+import { View, Image, Text, Platform } from 'react-native'
+import { Container, CustomText, Animate } from '../Custom'
 import { Constants, Location, Camera, Permissions } from 'expo'
 
 import CuriosityAPI from '../../libs/curiosityAPI'
@@ -10,7 +10,7 @@ import Geometrics from '../../libs/geometrics'
 import UX from '../../styles/UX'
 
 export default class Explorer extends React.Component {
-    radius   = 200000
+    radius   = 1000
     camera   = null
     heading  = null
     location = {
@@ -78,41 +78,61 @@ export default class Explorer extends React.Component {
 
     _watchHeading = () => {
         Location.watchHeadingAsync(res => {
-            this.heading = res.magHeading
+            this.heading = res.accuracy >= 3 ? res.magHeading : null
         })
     }
 
     _watchUserMatching = () => {
-        setInterval(() => {
-            CuriosityAPI.getLocations(
-                this.location.latitude, 
-                this.location.longitude, 
-                this.radius
-            ).then(res => {
-                if (res.err) return console.log(res.err)
+        CuriosityAPI.getLocations(
+            this.location.latitude, 
+            this.location.longitude, 
+            this.radius
+        ).then(res => {
+            if (res.err) return console.log(res.err)
 
-                // console.log(res)
+            let matched = null
+            // console.log(res)
 
-                for (let row of res.locations) {
-                    let b = Geometrics.bearing(
-                        this.location.latitude, 
-                        this.location.longitude, 
-                        row.lat, 
-                        row.lon
-                    )
-        
-                    if (Geometrics.headingsMatched(this.heading, b)) {
-                        this.setState({
-                            match: 'Eiffel Tower'
-                        })
-                    } else {
-                        this.setState({
-                            match: null
-                        })
-                    }
+            for (let row of res.locations) {
+                let b = Geometrics.bearing(
+                    this.location.latitude, 
+                    this.location.longitude, 
+                    row.lat, 
+                    row.lon
+                )
+    
+                if (Geometrics.headingsMatched(this.heading, b)) {
+                    matched = row
                 }
-            })
-        }, 500)
+            }
+
+            this.setState({
+                match: matched
+            }, () => setTimeout(this._watchUserMatching, 500))
+        })
+    }
+
+    _renderMatched = () => {
+        if (this.state.match) {
+            return (
+                <Animate style={UX.explorerMatchedContainer}>
+                    <View style={UX.explorerMatchedDetails}>
+                        <Image 
+                            style={UX.explorerMatchedImage}
+                            source={{uri: this.state.match.img_path}}
+                        />
+
+                        <Text style={UX.explorerMatchedTitle}>
+                            {this.state.match.name}
+                        </Text>
+
+                        <Text style={UX.explorerMatchedDescribe}>
+                            {this.state.match.describe}
+                        </Text>
+                    </View>
+                </Animate>
+            )
+        }
     }
 
     async componentDidMount() {
@@ -133,9 +153,7 @@ export default class Explorer extends React.Component {
                     />
 
                     <Container>
-                        <CustomText>
-                            {this.state.match ? this.state.match : 'N/A'}
-                        </CustomText>
+                        {this._renderMatched()}
                     </Container>
                 </Container>
             )

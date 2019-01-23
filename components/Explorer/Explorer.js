@@ -4,13 +4,14 @@ import React from 'react'
 import { View, Image, Text, Platform } from 'react-native'
 import { Container, CustomText, Animate } from '../Custom'
 import { Constants, Location, Camera, Permissions } from 'expo'
+import ExplorerMatched from './ExplorerMatched'
 
 import CuriosityAPI from '../../libs/curiosityAPI'
 import Geometrics from '../../libs/geometrics'
 import UX from '../../styles/UX'
 
 export default class Explorer extends React.Component {
-    radius   = 1000
+    radius   = 20000
     camera   = null
     heading  = null
     location = {
@@ -72,6 +73,7 @@ export default class Explorer extends React.Component {
             timeInterval: 10,
             distanceInterval: 0.1
         }, res => {
+            console.log(res.coords)
             this.location = res.coords
         })
     }
@@ -91,7 +93,6 @@ export default class Explorer extends React.Component {
             if (res.err) return console.log(res.err)
 
             let matched = null
-            // console.log(res)
 
             for (let row of res.locations) {
                 let b = Geometrics.bearing(
@@ -112,29 +113,6 @@ export default class Explorer extends React.Component {
         })
     }
 
-    _renderMatched = () => {
-        if (this.state.match) {
-            return (
-                <Animate style={UX.explorerMatchedContainer}>
-                    <View style={UX.explorerMatchedDetails}>
-                        <Image 
-                            style={UX.explorerMatchedImage}
-                            source={{uri: this.state.match.img_path}}
-                        />
-
-                        <Text style={UX.explorerMatchedTitle}>
-                            {this.state.match.name}
-                        </Text>
-
-                        <Text style={UX.explorerMatchedDescribe}>
-                            {this.state.match.describe}
-                        </Text>
-                    </View>
-                </Animate>
-            )
-        }
-    }
-
     async componentDidMount() {
         await this._activateCamera()
         await this._activateGeolocation()
@@ -153,7 +131,11 @@ export default class Explorer extends React.Component {
                     />
 
                     <Container>
-                        {this._renderMatched()}
+                        {
+                            this.state.match 
+                                ? <ExplorerMatched match={this.state.match} /> 
+                                : null 
+                        }
                     </Container>
                 </Container>
             )

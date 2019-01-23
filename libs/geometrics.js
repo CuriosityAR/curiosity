@@ -25,16 +25,17 @@ export default class Geometrics {
     }
 
     static bearing = (lat1, lon1, lat2, lon2) => {
-        let dLon = lon2 - lon1
+        lat1 = Geometrics._degToRad(lat1)
+        lon1 = Geometrics._degToRad(lon1)
+        lat2 = Geometrics._degToRad(lat2)
+        lon2 = Geometrics._degToRad(lon2)
+
+        let y = Math.sin(lon2 - lon1) * Math.cos(lat2)
 
         let x = Math.cos(lat1) * Math.sin(lat2) - 
-                Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon)
+                Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)
 
-        let y = Math.sin(dLon) * Math.cos(lat2)
-
-        let bearing = 360 - ((Geometrics._radToDeg(Math.atan2(y, x)) + 360) % 360)
-        
-        return bearing  
+        return (Geometrics._radToDeg(Math.atan2(y, x)) + 360) % 360
     }
 
     static headingsMatched = (h1, h2) => (h1 >= h2 - Geometrics._MARGIN 
